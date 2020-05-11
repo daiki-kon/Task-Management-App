@@ -1,0 +1,16 @@
+.kanban{
+  position: relative;
+  margin-left: 2vw;
+  margin-bottom: auto;
+  padding-top: 1vw;
+  padding-bottom: 1vw;
+  background: #F7F8FA;
+}
+
+.kanbanHeader{
+  display: flex;
+}
+
+.kanbanClose{
+  margin-left: auto;
+}
