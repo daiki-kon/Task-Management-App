@@ -22,7 +22,7 @@ export const SignInForm: FC = () => {
     <div>
       <Form>
         <Form.Field>
-          <label>AcountID or Email</label>
+          <label>UserName or Email</label>
           <input placeholder="AcountID or Email" />
         </Form.Field>
         <Form.Field>
