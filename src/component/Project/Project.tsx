@@ -27,8 +27,10 @@ const Project : FC = () => {
   const currentKanbans: KanbanInfo[]  = kanbans.items.filter((kanban) => kanban.parentProjectID === projectID)
 
   return(
-    <div>
-      <ProjectHeader/>
+    <div　className='project'>
+      <div className='project-header'>
+        <ProjectHeader/>
+      </div>
       <div className = "project-body">
         <Grid>
           {currentKanbans.length ? (currentKanbans.map((kanban) => (<Kanban { ...kanban }/>)))  :  <KanbanEmpty/>}

@@ -1,3 +1,4 @@
-.NewKanban{
-  display: flex;
+.project-menu{
+  position: fixed;
+  z-index: 5;
 }

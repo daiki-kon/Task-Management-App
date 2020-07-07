@@ -6,13 +6,12 @@ import {
   CognitoUserAttribute
 } from "amazon-cognito-identity-js"
 import awsConfiguration from '../../awsConfiguration'
+import { userPool } from '../../awsConfiguration' 
 
-import { Button, Checkbox, Form } from "semantic-ui-react";
+import { Button, Form, Header } from "semantic-ui-react";
+import './SignUp.css'
 
-const userPool = new CognitoUserPool({
-  UserPoolId: awsConfiguration.UserPoolId,
-  ClientId: awsConfiguration.ClientId,
-})
+
 
 export const SignUpForm: FC = () => {
   const history = useHistory();
@@ -44,13 +43,14 @@ export const SignUpForm: FC = () => {
   }
 
   return (
-    <div>
+    <div　className='signup-form'>
+      <Header as='h1' textAlign='center'>Sign-Up</Header>
       <Form>
-        <Form.Field>
+        <Form.Field className='user-name'>
           <label>User Name</label>
           <input placeholder="User Name" value={userName} onChange={(e) => setUserName(e.target.value)}/>
         </Form.Field>
-        <Form.Field>
+        <Form.Field className='email'>
           <label>Email</label>
           <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
         </Form.Field>
@@ -58,7 +58,7 @@ export const SignUpForm: FC = () => {
           <label>Password</label>
           <input placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
         </Form.Field>
-        <Button type="submit" onClick={() =>signUp()}>Sign Up</Button>
+        <Button fluid type="submit" onClick={() =>signUp()}>Sign Up</Button>
       </Form>
     </div>
   );

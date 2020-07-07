@@ -1,11 +1,13 @@
 import React, { FC, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import {
   CognitoUserPool,
   CognitoUser
 } from "amazon-cognito-identity-js"
 import awsConfiguration from '../../awsConfiguration'
-import { Label, Input, Button } from 'semantic-ui-react';
+import { Label, Input, Button, Form, Header } from 'semantic-ui-react';
+
+import './Verification.css'
 
 const userPool = new CognitoUserPool({
   UserPoolId: awsConfiguration.UserPoolId,
@@ -13,7 +15,7 @@ const userPool = new CognitoUserPool({
 })
 
 export const Verification: FC = () =>{
-
+  const history = useHistory();
   const { userName } = useParams();
   const [verificationCode, setVerificationCode] = useState('')
 
@@ -27,28 +29,36 @@ export const Verification: FC = () =>{
       Pool: userPool
     })
 
-    cognitoUser.confirmRegistration(verificationCode, true, (err: any) => {
+    cognitoUser.confirmRegistration(verificationCode, true, (err: any,result: any) => {
       if (err) {
         console.log(err)
         return
       }
-      console.log('verification succeeded')
+      console.log(result)
       setVerificationCode('')
+
+      if (result == 'SUCCESS'){
+        history.push('/SignIn')
+      }
     })
   }
 
-
   return(
-    <div>
-      <Label>verification code</Label>
-      <Input 
-        icon='key'
-        iconPosition='left'
-        placeholder='Enter Verification Code'  
-        value={verificationCode} 
-        onChange={(e) => setVerificationCode(e.target.value)}
-      />
-      <Button onClick={() => verifyCode()}>Verify</Button>
+    <div className='verification-form'>
+      <Form>
+        <Header as='h1' textAlign='center'>Verification</Header>
+        <Form.Field>
+          <label>verification code</label>
+          <Input 
+            icon='key'
+            iconPosition='left'
+            placeholder='Enter Verification Code'  
+            value={verificationCode} 
+            onChange={(e) => setVerificationCode(e.target.value)}
+          />
+        </Form.Field>
+        <Button fluid onClick={() => verifyCode()}>Verify</Button>
+      </Form>
     </div>
   )
 }

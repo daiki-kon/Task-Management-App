@@ -1,61 +1,88 @@
 import React,{ FC, useEffect } from 'react';
 import { withRouter } from 'react-router';
-import useReactRouter from 'use-react-router';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  useParams,
+  useHistory,
+  useLocation,
+} from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { projectDelete} from '../../actions/Projects';
-import { Button, Card, Icon } from 'semantic-ui-react';
+import { Button, Card, Icon, Menu } from 'semantic-ui-react';
 import { Projects, ProjectInfo, KanbanInfo } from '../../DefineInfo'; 
-import { CertInfo } from '../Auth/Cert';
 import { storeData } from '../../reducer'
 
 import './ProjectList.css';
-import { KANBAN_DELETE_ALL, kanbanDeleteAll } from '../../actions/kanban';
+import { kanbanDeleteAll } from '../../actions/kanban';
+import { getProjecct } from '../../actions/Projects'
 import { taskCardDeleteAll } from '../../actions/TaskCard';
+import { CognitoUserPool } from 'amazon-cognito-identity-js';
 
 const range = (n: number) => (n < 0 ? [] : Array.from(Array(n), (_, i) => i));
 
 export const ProjectList: FC = () => {
-  const { history, location, match } = useReactRouter();
+  const history = useHistory()
+  const dispatch = useDispatch();
 
-  let projects = useSelector((state:storeData) => state.projects);
+  const projects = useSelector((state:storeData) => state.projects);
+  // const user = useSelector((state:storeData) => state.user);
+
+  const { userName } = useParams();
+
+  useEffect(() => {
+    dispatch(getProjecct.start({userName: userName}))
+  },[]);
+    
 
   return(
     <div>
-      <div className = 'header'>
-        <Button onClick={() => history.push('/NewProject')} >New Project</Button>
-        <CertInfo/>
+      <Menu className='list-menu' fluid>
+        <Menu.Item> 
+          <Button onClick={() => history.push('/NewProject')} >New Project</Button>
+        </Menu.Item>
+      </Menu>
+      <div className='project-list'>
+        {projects.items.length ? (projects.items.map((output,index) => (<ProjectDesc key={index.toString()} projectInfo={output} userName={userName}/>))) : <ProjectDescEmpty/>}
       </div>
-      {projects.items.length ? (projects.items.map((output,index) => (<ProjectDesc key={index.toString()} { ...output}/>))) : <ProjectDescEmpty/>}
     </div>
   )
 }
 
-const ProjectDesc: FC<ProjectInfo> = (
-  projectProps
-) => {
+
+
+
+const ProjectDesc: FC<{projectInfo: ProjectInfo,userName: String}> = ({
+  projectInfo,
+  userName
+}) => {
   const dispatch = useDispatch();
-  const { history, location, match } = useReactRouter();
+  const history = useHistory()
   const kanbans = useSelector((state:storeData) => state.kanbans);
 
-  const projectClose = () => {
-  
-    const deleteKanbans: KanbanInfo[] = kanbans.items.filter((kanban: KanbanInfo) => (kanban.parentProjectID === projectProps.projectID))
+  const projectClose = (e: React.MouseEvent) => {
+    
+    // 親のイベントを発火させないように追加
+    e.stopPropagation() 
+
+    const deleteKanbans: KanbanInfo[] = kanbans.items.filter((kanban: KanbanInfo) => (kanban.parentProjectID === projectInfo.projectID))
     deleteKanbans.map((kanban: KanbanInfo) => (dispatch(taskCardDeleteAll(kanban.kanbanID || ''))))
-    dispatch(kanbanDeleteAll(projectProps.projectID || ''))
-    dispatch(projectDelete( projectProps ))
+    dispatch(kanbanDeleteAll(projectInfo.projectID || ''))
+    dispatch(projectDelete( projectInfo ))
   }
 
   return(
-    <div className='project-desc'>
-      <Card className="project-card" onClick={() => history.push('/Project/' + projectProps.projectID)}>
-        <Card.Content header={ projectProps.projectTitle}  />
-        <Card.Content description={ projectProps.projectDesc } />
-      </Card>
-      <div className='project-delete'>
-          <Button icon onClick={ () => (projectClose())}>
+    <div className='project-card'>
+      <Card fluid onClick={() => history.push('/Project/' + userName + "/" + projectInfo.projectID)}>
+        <Card.Content className='project-header'>
+          <header>{ projectInfo.projectTitle }</header>
+          <Button className='project-delete' icon onClick={ (e: React.MouseEvent) => (projectClose(e))}>
             <Icon name='close'/>
           </Button>
-      </div>
+        </Card.Content>
+        <Card.Content description={ projectInfo.projectDesc } />
+      </Card>
     </div>
     
   )
@@ -63,9 +90,9 @@ const ProjectDesc: FC<ProjectInfo> = (
 
 const ProjectDescEmpty: FC = () => {
   return(
-    <Card className="project-none">
+    <Card className="project-none" fluid>
       <Card.Content>
-          <Card.Header>Project is None</Card.Header>
+          <Card.Header textAlign='center'>Project is None</Card.Header>
       </Card.Content>
     </Card>
   )

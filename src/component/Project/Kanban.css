@@ -4,7 +4,11 @@
   margin-bottom: auto;
   padding-top: 1vw;
   padding-bottom: 1vw;
-  background: #F7F8FA;
+  background-color: blue;
+  display: table;
+  overflow-x: scroll;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
 }
 
 .kanbanHeader{

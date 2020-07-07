@@ -27,7 +27,8 @@
     "react-router-dom": "^5.1.2",
     "use-react-router": "^1.0.7",
     "uuid": "^8.0.0",
-    "amazon-cognito-identity-js": "^4.2.3"
+    "amazon-cognito-identity-js": "^4.2.3",
+    "axios": "^0.19.2"
   },
   "scripts": {
     "start": "react-scripts start",

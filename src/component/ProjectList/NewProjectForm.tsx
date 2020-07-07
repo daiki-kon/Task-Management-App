@@ -5,6 +5,7 @@ import { ProjectInfo } from '../../DefineInfo';
 import useReactRouter from 'use-react-router';
 
 import { Button, Form} from 'semantic-ui-react';
+import './NewProjectForm.css';
 
 const counterSelector = (state:ProjectInfo) => ( {...state} );
 
@@ -14,7 +15,7 @@ export const NewProjectForm: FC = () => {
   const { history, location, match } = useReactRouter();
 
   const submit = (titleP: string, descP: string) => {
-    history.push('/');
+    history.push('/ProjectList');
     dispatch(projectCreate({projectTitle:titleP,projectDesc:descP}));
   }
 
@@ -22,7 +23,7 @@ export const NewProjectForm: FC = () => {
   const [desc,setDesc] = useState('')
   
   return (
-    <>
+    <div className='project-form'>
       <Form>
         <Form.Field>
           <label>Project Title</label>
@@ -31,8 +32,8 @@ export const NewProjectForm: FC = () => {
         <Form.Field>
           <Form.TextArea type='text' label='Project Description' placeholder='Please Describe This Project...' onChange={(e) => setDesc(e.currentTarget.value)} />
         </Form.Field>
-        <Button onClick={() => {submit(title,desc)}}>Create</Button>
+        <Button fluid onClick={() => {submit(title,desc)}}>Create</Button>
       </Form>
-    </>
+    </div>
   );
 };

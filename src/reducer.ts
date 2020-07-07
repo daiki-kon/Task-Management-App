@@ -2,17 +2,23 @@ import { Reducer } from 'redux';
 import { combineReducers } from 'redux';
 import { v4 as UUID} from 'uuid';
 
-import { ProjectsAction, PROJECT_CREATE, PROJECT_DELETE } from './actions/Projects'
+import { UserAction, LOGIN_USER} from './actions/User'
+import { ProjectsAction} from './actions/Projects'
+import * as ProjectActionType from './actions/ProjectConstants'
 import { KanbanAction, KANBAN_CREATE, KANBAN_DELETE, KANBAN_EDIT_TITLE, KANBAN_EDIT_CONTENT, KANBAN_DELETE_ALL } from './actions/kanban'
 import { TascCardAction, TASK_CARD_ADD, TASK_CARD_DELETE_ALL,TASK_CARD_EDIT } from './actions/TaskCard'
-import { Projects, ProjectInfo, Kanbans, KanbanInfo, TascCards, TaskCardInfo } from './DefineInfo'
+import { User, Projects, ProjectInfo, Kanbans, KanbanInfo, TascCards, TaskCardInfo } from './DefineInfo'
+import { UserAgent } from 'amazon-cognito-identity-js';
 
 const projectReducer: Reducer<Projects, ProjectsAction> = (
-  state: Projects = { items: []},
+  state: Projects = { 
+    items: [],
+    isLoading: false, 
+  },
   action: ProjectsAction,
 ): Projects => {
   switch (action.type) {
-    case PROJECT_CREATE:
+    case ProjectActionType.PROJECT_CREATE:
 
       const newState: ProjectInfo ={
         projectID: UUID().toString(),
@@ -25,7 +31,27 @@ const projectReducer: Reducer<Projects, ProjectsAction> = (
         items: [ ...state.items , newState]
       };
 
-    case PROJECT_DELETE:
+    case ProjectActionType.GET_PROJECT_START:
+      return {
+        ...state,
+        items: [],
+        isLoading: true
+      };
+    case ProjectActionType.GET_PROJECT_SUCCEED:
+      return {
+        ...state,
+        items: action.payload.result.projects,
+        isLoading: false
+      };
+    case ProjectActionType.GET_PROJECT_FAIL:
+      return {
+        ...state,
+        items: [ ...state.items],
+        isLoading: false,
+        error: action.payload.error
+      };
+
+    case ProjectActionType.PROJECT_DELETE:
       return {
         ...state,
         items: state.items.filter((project: ProjectInfo) => project.projectID !== action.payload.deleteProject.projectID),
@@ -73,7 +99,7 @@ const kanbanReducer: Reducer<Kanbans, KanbanAction> = (
     case KANBAN_EDIT_TITLE:
       return {
         ...state,
-        items: [ ]
+        items: []
       };
 
     case KANBAN_EDIT_CONTENT:
@@ -132,17 +158,44 @@ const taskCardReducer: Reducer<TascCards, TascCardAction> = (
   }
 };
 
+const userReducer: Reducer<User, UserAction> = (
+  state: User = {userName: '', isSignIn: false},
+  action: UserAction,
+): User => {
+  switch(action.type) {
+    case LOGIN_USER: 
+      const registerUsername: string = action.payload.userInfo.userName;
+      const registerSignIn: boolean = action.payload.userInfo.isSignIn;
+
+      const modedUser: User = {
+          userName: registerUsername,
+          isSignIn: registerSignIn
+      }
+
+      return{
+        ...state,
+        ...modedUser
+      }
+
+    default: {
+      return state;
+    }
+  }
+}
+
 
 const rootReducer = combineReducers({
   projects: projectReducer,
   kanbans: kanbanReducer,
   taskCards: taskCardReducer,
+  user: userReducer
 })
 
 export interface storeData{
   projects: Projects;
   kanbans: Kanbans;
-  taskCards: TascCards
+  taskCards: TascCards;
+  user: User;
 }
 
 export default rootReducer

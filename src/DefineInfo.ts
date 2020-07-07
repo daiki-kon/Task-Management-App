@@ -1,4 +1,4 @@
-import UUID from 'uuid';
+import { AxiosError } from 'axios';
 
 export interface TaskCardInfo{
   parentKanbanID: string;
@@ -20,6 +20,8 @@ export interface ProjectInfo{
 
 export interface Projects{
   items: ProjectInfo[];  
+  isLoading: boolean;
+  error?: AxiosError | null;
 }
 
 export interface Kanbans{
@@ -31,7 +33,6 @@ export interface TascCards{
 }
 
 export interface User{
-  userID?  : string;
-  userName?: string;
+  userName: string;
   isSignIn : boolean;
 }

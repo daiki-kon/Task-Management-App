@@ -1,4 +1,11 @@
+.project-header{
+  height: 7vh;
+}
+
 .project-body{
   position: relative;
-  top: 7vw;
+  width: 100%;
+  height: 100vh;
+  margin-top: 5vh;
+  white-space: nowrap;
 }

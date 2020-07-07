@@ -9,9 +9,8 @@ import {
 } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { kanbanCreate } from '../../actions/kanban';
-import { CertInfo } from '../Auth/Cert'
 
-import { Button, Form } from 'semantic-ui-react';
+import { Button, Form, Input,Menu } from 'semantic-ui-react';
 import './ProjectHeader.css';
 
 
@@ -29,14 +28,14 @@ const ProjectHeader : FC = () => {
 
   return(
     <div>
-      <CertInfo/>
-      <Form className = 'NewKanban' onSubmit={() => submit(title)}>
-        <Form.Field>
-          <input type="text" placeholder='New Kanban' value={title} onChange={(e) => setTitle(e.target.value)} />
-        </Form.Field>
-        <Form.Button content='Add New'/>
-      </Form>
+      <Menu className='project-menu' fluid>
+        <Menu.Item>
+          <Input type="text" placeholder='New Kanban' value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Button content='Add' onClick={() => submit(title)}/>
+        </Menu.Item>
+      </Menu>
     </div>
+    
   )
 }
 

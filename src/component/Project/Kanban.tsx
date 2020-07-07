@@ -6,7 +6,7 @@ import { taskCardAdd, taskCardDeleteAll, taskCardEdit } from '../../actions/Task
 import { storeData } from '../../reducer'
 import { TaskCardForm, TaskCard,TaskCardEmpty } from './TaskCard' 
 
-import { Button, Grid, Icon} from 'semantic-ui-react'
+import { Button, Grid, Icon, Container} from 'semantic-ui-react'
 import './Kanban.css'
 
 const initKanbanProps: KanbanInfo = {
@@ -70,12 +70,9 @@ export const Kanban: FC<KanbanInfo> = (
 };
 
 export const KanbanEmpty: FC = () =>(
-  <Grid >
-    <div className='kanban'>
-      <Grid.Column >
-        <p>None</p>
-      </Grid.Column>
-    </div>
-  </Grid>
+  <Container className='kanban-empt' textAlign='center'>    
+      Kanban is none<br/>
+      Please create new Kanban
+  </Container>
 );
 
