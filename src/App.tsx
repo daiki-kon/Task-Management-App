@@ -9,6 +9,7 @@ import { SignInForm } from './component/Auth/SignIn';
 import { SignUpForm } from './component/Auth/SignUp'
 import { Verification } from './component/Auth/Verification'
 import { Home } from './component/Home'
+import { AuthWrap } from './container/Auth'
 
 
 const App: FC = () => {
@@ -17,13 +18,15 @@ const App: FC = () => {
   return (
     <div className="container">
       <Switch>
+        <Route exact path="/" render={() => <Home/>} />
         <Route exact path="/SignIn" render={() => <SignInForm/>} />
         <Route exact path="/SignUp" render={() => <SignUpForm/>} />
-        <Route exact path="/Project/:userName/:projectID" render={() => <Project/>} />
-        <Route exact path="/NewProject" render={() => <NewProjectForm/>} />
-        <Route exact path="/Verification/:userName" render={() => <Verification/>} />
-        <Route exact path="/ProjectList/:userName" render={() => <ProjectList/>} />
-        <Route exact path="/" render={() => <Home/>} />
+        <AuthWrap>
+          <Route exact path="/Project/:userName/:projectID" render={() => <Project/>} />
+          <Route exact path="/NewProject" render={() => <NewProjectForm/>} />
+          <Route exact path="/Verification/:userName" render={() => <Verification/>} />
+          <Route exact path="/ProjectList/:userName" render={() => <ProjectList/>} />
+        </AuthWrap>
       </Switch>
     </div>
   )

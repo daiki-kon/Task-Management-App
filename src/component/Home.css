@@ -1,0 +1,8 @@
+.start{
+  display: block;
+  position: absolute;     /*body要素に対して絶対配置*/
+  top: 50%;       /*上端を中央に*/
+  left: 50%;      /*左端を中央に*/
+  margin: 0 auto;
+  transform: translate(-50%, -50%)
+}

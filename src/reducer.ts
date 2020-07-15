@@ -159,7 +159,7 @@ const taskCardReducer: Reducer<TascCards, TascCardAction> = (
 };
 
 const userReducer: Reducer<User, UserAction> = (
-  state: User = {userName: '', isSignIn: false},
+  state: User = {userName: '', isSignIn: true},
   action: UserAction,
 ): User => {
   switch(action.type) {
