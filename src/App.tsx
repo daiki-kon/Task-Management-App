@@ -22,10 +22,10 @@ const App: FC = () => {
         <Route exact path="/SignIn" render={() => <SignInForm/>} />
         <Route exact path="/SignUp" render={() => <SignUpForm/>} />
         <AuthWrap>
-          <Route exact path="/Project/:userName/:projectID" render={() => <Project/>} />
+          <Route exact path="/Project/:projectID" render={() => <Project/>} />
           <Route exact path="/NewProject" render={() => <NewProjectForm/>} />
-          <Route exact path="/Verification/:userName" render={() => <Verification/>} />
-          <Route exact path="/ProjectList/:userName" render={() => <ProjectList/>} />
+          <Route exact path="/Verification" render={() => <Verification/>} />
+          <Route exact path="/ProjectList" render={() => <ProjectList/>} />
         </AuthWrap>
       </Switch>
     </div>

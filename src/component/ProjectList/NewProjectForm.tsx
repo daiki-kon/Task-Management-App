@@ -1,8 +1,9 @@
 import React, { FC, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { projectCreate　} from '../../actions/Projects';
+import { postProject } from '../../actions/Projects';
 import { ProjectInfo } from '../../DefineInfo';
 import useReactRouter from 'use-react-router';
+import { storeData } from '../../reducer';
 
 import { Button, Form} from 'semantic-ui-react';
 import './NewProjectForm.css';
@@ -13,14 +14,28 @@ export const NewProjectForm: FC = () => {
 
   const dispatch = useDispatch();
   const { history, location, match } = useReactRouter();
-
-  const submit = (titleP: string, descP: string) => {
-    history.push('/ProjectList');
-    dispatch(projectCreate({projectTitle:titleP,projectDesc:descP}));
-  }
+  const user = useSelector((state:storeData) => state.user);
 
   const [title, setTitle] = useState('');
   const [desc,setDesc] = useState('')
+
+
+  const submit = (event: any) => {
+    // dispatch(projectCreate({projectID:"", projectTitle:titleP, projectDesc:descP}));
+    // form submission canceled because the form is not connected の回避
+    event.preventDefault();
+    const newProject: ProjectInfo = {
+      projectID: "",
+      projectTitle: title,
+      projectDesc: desc
+    } 
+    dispatch(
+      postProject.start(
+        {userName: user.userName, item: newProject},
+        () => {history.push('/ProjectList')}
+      )
+    );
+  }
   
   return (
     <div className='project-form'>
@@ -32,7 +47,7 @@ export const NewProjectForm: FC = () => {
         <Form.Field>
           <Form.TextArea type='text' label='Project Description' placeholder='Please Describe This Project...' onChange={(e) => setDesc(e.currentTarget.value)} />
         </Form.Field>
-        <Button fluid onClick={() => {submit(title,desc)}}>Create</Button>
+        <Button type='submit' fluid onClick={(event) => submit(event)}>Create</Button>
       </Form>
     </div>
   );

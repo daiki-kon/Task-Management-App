@@ -35,13 +35,11 @@ export const SignInForm: FC = () => {
 
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (result) => {
-        console.dir(result)
         const accessToken = result.getIdToken().getJwtToken()
-        console.log('idToken: ' + accessToken)
         setUserName('')
         setPassword('')
         dispatch(loginUser({userName: userName,isSignIn: true}))
-        history.push('/ProjectList/' + userName)
+        history.push('/ProjectList')
       },
       onFailure: (err) => {
         console.error(err.code)

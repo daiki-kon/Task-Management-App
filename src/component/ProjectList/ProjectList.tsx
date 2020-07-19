@@ -10,7 +10,7 @@ import {
 } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { projectDelete} from '../../actions/Projects';
-import { Button, Card, Icon, Menu } from 'semantic-ui-react';
+import { Button, Card, Icon, Menu, Dimmer,　Loader } from 'semantic-ui-react';
 import { Projects, ProjectInfo, KanbanInfo } from '../../DefineInfo'; 
 import { storeData } from '../../reducer'
 
@@ -20,21 +20,18 @@ import { getProjecct } from '../../actions/Projects'
 import { taskCardDeleteAll } from '../../actions/TaskCard';
 import { CognitoUserPool } from 'amazon-cognito-identity-js';
 
-const range = (n: number) => (n < 0 ? [] : Array.from(Array(n), (_, i) => i));
-
 export const ProjectList: FC = () => {
   const history = useHistory()
   const dispatch = useDispatch();
 
   const projects = useSelector((state:storeData) => state.projects);
-  // const user = useSelector((state:storeData) => state.user);
-
-  const { userName } = useParams();
+  const user = useSelector((state:storeData) => state.user);
 
   useEffect(() => {
-    dispatch(getProjecct.start({userName: userName}))
-  },[]);
-    
+    dispatch(getProjecct.start({userName: user.userName}))
+  },[user.userName]);
+  
+
 
   return(
     <div>
@@ -44,19 +41,30 @@ export const ProjectList: FC = () => {
         </Menu.Item>
       </Menu>
       <div className='project-list'>
-        {projects.items.length ? (projects.items.map((output,index) => (<ProjectDesc key={index.toString()} projectInfo={output} userName={userName}/>))) : <ProjectDescEmpty/>}
+        {projects.isLoading?
+          <Dimmer active inverted>
+            <Loader size='large'>Loading</Loader>
+          </Dimmer>:
+          <ManageProject {...projects}/>}
       </div>
     </div>
   )
 }
 
+const ManageProject: FC<Projects> = (
+  projects
+) =>{
 
+  return(
+    <>
+      {projects.items.length ? (projects.items.map((output,index) => (<ProjectDesc key={index.toString()} {...output}/>))) : <ProjectDescEmpty/>}
+    </>
+  )
+}
 
-
-const ProjectDesc: FC<{projectInfo: ProjectInfo,userName: String}> = ({
-  projectInfo,
-  userName
-}) => {
+const ProjectDesc: FC<ProjectInfo> = (
+  projectInfo
+) => {
   const dispatch = useDispatch();
   const history = useHistory()
   const kanbans = useSelector((state:storeData) => state.kanbans);
@@ -74,7 +82,7 @@ const ProjectDesc: FC<{projectInfo: ProjectInfo,userName: String}> = ({
 
   return(
     <div className='project-card'>
-      <Card fluid onClick={() => history.push('/Project/' + userName + "/" + projectInfo.projectID)}>
+      <Card fluid onClick={() => history.push('/Project/' + projectInfo.projectID)}>
         <Card.Content className='project-header'>
           <header>{ projectInfo.projectTitle }</header>
           <Button className='project-delete' icon onClick={ (e: React.MouseEvent) => (projectClose(e))}>

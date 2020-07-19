@@ -33,7 +33,6 @@ export const AuthWrap: FC<RouteProps> = (props) => {
                 dispatch(loginUser({userName: "", isSignIn: false}));
                 return;
             }
-            console.log('session validity: ' + session.isValid());
             cognitoUser.getUserData(function(err: any, userData: any) {
               if (err) {
                 alert(err.message || JSON.stringify(err));

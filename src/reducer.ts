@@ -18,23 +18,33 @@ const projectReducer: Reducer<Projects, ProjectsAction> = (
   action: ProjectsAction,
 ): Projects => {
   switch (action.type) {
-    case ProjectActionType.PROJECT_CREATE:
-
-      const newState: ProjectInfo ={
-        projectID: UUID().toString(),
-        projectTitle: action.payload.projects.projectTitle,
-        projectDesc: action.payload.projects.projectDesc,
-      }
-
+    //Create Project 
+    case ProjectActionType.POST_PROJECT_STASRT:
       return {
         ...state,
-        items: [ ...state.items , newState]
+        items: [ ...state.items ],
+        isLoading: true,
       };
-
+    case ProjectActionType.POST_PROJECT_SUCCEED:
+      return {
+        ...state,
+        items: [ ...state.items, action.payload.result.item],
+        isLoading: false
+        
+      };
+    case ProjectActionType.POST_PROJECT_FAIL:
+      return {
+        ...state,
+        items: [ ...state.items],
+        isLoading: false,
+        error: action.payload.error
+      };
+    
+    // Get Projec
     case ProjectActionType.GET_PROJECT_START:
       return {
         ...state,
-        items: [],
+        items: [ ...state.items ],
         isLoading: true
       };
     case ProjectActionType.GET_PROJECT_SUCCEED:

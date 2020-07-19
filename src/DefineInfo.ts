@@ -13,9 +13,14 @@ export interface KanbanInfo{
 }
 
 export interface ProjectInfo{
-  projectID?: string;
+  projectID: string;
   projectTitle: string;
   projectDesc: string;
+}
+
+export interface CreateProject{
+  userName: string;
+  item: ProjectInfo;
 }
 
 export interface Projects{
