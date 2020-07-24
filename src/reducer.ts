@@ -39,7 +39,7 @@ const projectReducer: Reducer<Projects, ProjectsAction> = (
         isLoading: false,
         error: action.payload.error
       };
-    
+    　
     // Get Projec
     case ProjectActionType.GET_PROJECT_START:
       return {
@@ -61,10 +61,25 @@ const projectReducer: Reducer<Projects, ProjectsAction> = (
         error: action.payload.error
       };
 
-    case ProjectActionType.PROJECT_DELETE:
+    // Delete Projec
+    case ProjectActionType.DELETE_PROJECT_START:
       return {
         ...state,
-        items: state.items.filter((project: ProjectInfo) => project.projectID !== action.payload.deleteProject.projectID),
+        items: [ ...state.items ],
+        isLoading: true
+      };
+    case ProjectActionType.DELETE_PROJECT_SUCCEED:
+      return {
+        ...state,
+        items: state.items.filter((project: ProjectInfo) => project.projectID !== action.payload.result.projectID),
+        isLoading: false
+      };
+    case ProjectActionType.DELETE_PROJECT_FAIL:
+      return {
+        ...state,
+        items: [ ...state.items],
+        isLoading: false,
+        error: action.payload.error
       };
   
     default: {

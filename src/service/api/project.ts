@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { apiBaseUrl } from '../../awsConfiguration';
-import { ProjectInfo, CreateProject } from '../../DefineInfo'; 
+import { ProjectInfo, CreateProject, DeleteProject } from '../../DefineInfo'; 
 import { NewProjectForm } from '../../component/ProjectList/NewProjectForm';
 
-export const getProjectsFactory  = (userName?: string) => {
+export const getProjectsFactory  = () => {
   const config = {
     baseURL: apiBaseUrl,
     timeout: 7000,
@@ -69,4 +69,32 @@ export const postProjectFactory = () => {
 
   };
   return postProjects;
+}
+
+export const deleteProjectsFactory  = () => {
+  const config = {
+    baseURL: apiBaseUrl,
+    timeout: 7000,
+  }
+  const instance = axios.create(config);
+
+  const deleteProject= async (deleteProject: DeleteProject) => {
+
+    const deleteProjectHash :{[key: string]: string;} = {
+      "projectID": deleteProject.projectID,
+      "userName": deleteProject.userName
+    };
+
+    const response = await instance.delete(`/task_mng/project` , { data: deleteProjectHash});
+
+    if (response.status !== 200) {
+      throw new Error('Server Error');
+    }
+
+    const deletedProject: DeleteProject = response.data;
+
+    return deletedProject;
+
+  };
+  return deleteProject;
 }

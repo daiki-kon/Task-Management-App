@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { ProjectInfo, CreateProject } from '../DefineInfo'
+import { ProjectInfo, CreateProject, DeleteProject } from '../DefineInfo'
 
 import * as ProjectActionType from './ProjectConstants';
 
@@ -47,22 +47,35 @@ export const postProject = {
   }), 
 }
 
-export const projectDelete = (
-  deleteProject: ProjectInfo
-) => ({
-  type: ProjectActionType.PROJECT_DELETE as typeof ProjectActionType.PROJECT_DELETE,
-  payload: { deleteProject }
-});
+export const deleteProject = {
+  start: (params: DeleteProject) => ({
+    type: ProjectActionType.DELETE_PROJECT_START as typeof ProjectActionType.DELETE_PROJECT_START,
+    payload: params, 
+  }),
+  
+  succeed: (params: DeleteProject, result: DeleteProject) => ({
+    type: ProjectActionType.DELETE_PROJECT_SUCCEED as typeof ProjectActionType.DELETE_PROJECT_SUCCEED, 
+    payload: { params, result },
+  }),
 
+  fail: (params: DeleteProject, error: AxiosError) => ({
+    type: ProjectActionType.DELETE_PROJECT_FAIL as typeof ProjectActionType.DELETE_PROJECT_FAIL, 
+    payload: { params, error },
+    error: true,
+  }), 
+}
 
 
 export type ProjectsAction =
-  | ReturnType<typeof projectDelete>
   | ReturnType<typeof getProjecct.start>
   | ReturnType<typeof getProjecct.succeed>
   | ReturnType<typeof getProjecct.fail>
   | ReturnType<typeof postProject.start>
   | ReturnType<typeof postProject.succeed>
-  | ReturnType<typeof postProject.fail>;
+  | ReturnType<typeof postProject.fail>
+  | ReturnType<typeof deleteProject.start>
+  | ReturnType<typeof deleteProject.succeed>
+  | ReturnType<typeof deleteProject.fail>;
+
 
 

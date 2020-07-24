@@ -1,9 +1,9 @@
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
 import * as Action from '../actions/ProjectConstants';
-import { getProjecct, postProject } from '../actions/Projects';
-import { getProjectsFactory, postProjectFactory } from '../service/api/project';
-import { CreateProject } from '../DefineInfo';
+import { getProjecct, postProject,　deleteProject } from '../actions/Projects';
+import { getProjectsFactory, postProjectFactory, deleteProjectsFactory } from '../service/api/project';
+import { CreateProject, DeleteProject } from '../DefineInfo';
 
 function* runGetProjects(action: ReturnType<typeof getProjecct.start>) {
   const { userName } = action.payload;
@@ -40,6 +40,26 @@ function* runPostProjects(action: ReturnType<typeof postProject.start>) {
   }
 }
 
+function* runDeleteProject(action: ReturnType<typeof deleteProject.start>) {
+  const deleteItem = action.payload
+
+  const deleteTarget: DeleteProject = {
+    userName: deleteItem.userName,
+    projectID: deleteItem.projectID
+  }
+
+  try {
+    const api = deleteProjectsFactory();
+    const project: DeleteProject = yield call(api, deleteTarget);
+
+
+    yield put(deleteProject.succeed({ ...project  }, { ...project }));
+
+  } catch (error) {
+    yield put(deleteProject.fail(deleteItem, error));
+  }
+}
+
 export function* watchGetProjects() {
   yield takeLatest(Action.GET_PROJECT_START, runGetProjects);
 }
@@ -48,6 +68,10 @@ export function* watchPostProject() {
   yield takeLatest(Action.POST_PROJECT_STASRT, runPostProjects);
 }
 
+export function* watchDeleteProject() {
+  yield takeLatest(Action.DELETE_PROJECT_START, runDeleteProject);
+}
+
 export default function* rootSaga() {
-  yield all([fork(watchGetProjects),fork(watchPostProject)]);
+  yield all([fork(watchGetProjects),fork(watchPostProject),fork(watchDeleteProject)]);
 }

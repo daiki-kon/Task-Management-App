@@ -1,24 +1,18 @@
 import React,{ FC, useEffect } from 'react';
 import { withRouter } from 'react-router';
 import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  useParams,
   useHistory,
-  useLocation,
 } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { projectDelete} from '../../actions/Projects';
 import { Button, Card, Icon, Menu, Dimmer,　Loader } from 'semantic-ui-react';
 import { Projects, ProjectInfo, KanbanInfo } from '../../DefineInfo'; 
 import { storeData } from '../../reducer'
 
 import './ProjectList.css';
 import { kanbanDeleteAll } from '../../actions/kanban';
-import { getProjecct } from '../../actions/Projects'
+import { getProjecct, deleteProject } from '../../actions/Projects'
 import { taskCardDeleteAll } from '../../actions/TaskCard';
-import { CognitoUserPool } from 'amazon-cognito-identity-js';
+
 
 export const ProjectList: FC = () => {
   const history = useHistory()
@@ -68,6 +62,7 @@ const ProjectDesc: FC<ProjectInfo> = (
   const dispatch = useDispatch();
   const history = useHistory()
   const kanbans = useSelector((state:storeData) => state.kanbans);
+  const user    = useSelector((state:storeData) => state.user)
 
   const projectClose = (e: React.MouseEvent) => {
     
@@ -77,7 +72,7 @@ const ProjectDesc: FC<ProjectInfo> = (
     const deleteKanbans: KanbanInfo[] = kanbans.items.filter((kanban: KanbanInfo) => (kanban.parentProjectID === projectInfo.projectID))
     deleteKanbans.map((kanban: KanbanInfo) => (dispatch(taskCardDeleteAll(kanban.kanbanID || ''))))
     dispatch(kanbanDeleteAll(projectInfo.projectID || ''))
-    dispatch(projectDelete( projectInfo ))
+    dispatch(deleteProject.start({userName: user.userName, projectID: projectInfo.projectID}))
   }
 
   return(

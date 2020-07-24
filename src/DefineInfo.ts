@@ -23,6 +23,11 @@ export interface CreateProject{
   item: ProjectInfo;
 }
 
+export interface DeleteProject{
+  userName: string;
+  projectID: string;
+}
+
 export interface Projects{
   items: ProjectInfo[];  
   isLoading: boolean;
