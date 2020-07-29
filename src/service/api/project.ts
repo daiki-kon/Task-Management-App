@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { apiBaseUrl } from '../../awsConfiguration';
 import { ProjectInfo, CreateProject, DeleteProject } from '../../DefineInfo'; 
-import { NewProjectForm } from '../../component/ProjectList/NewProjectForm';
+import { getIdToken } from '../../container/Auth'
+
 
 export const getProjectsFactory  = () => {
   const config = {
@@ -12,8 +13,12 @@ export const getProjectsFactory  = () => {
 
   const getProjects = async (userName: string) => {
 
-    const response = await instance.get(`/task_mng/project?userName=${userName}`);
+    const idToken =  getIdToken();
 
+    const response = await instance.get(`/task_mng/project?userName=${userName}`, 
+                                          {headers: {"Authorization": `${idToken}`}});
+
+    console.log(response)
     if (response.status !== 200) {
       throw new Error('Server Error');
     }
@@ -48,7 +53,10 @@ export const postProjectFactory = () => {
       "project_desc": project.item.projectDesc
     }
 
-    const response = await instance.post(`/task_mng/project`,JSON.stringify(newProjectHash));
+    const idToken =  getIdToken();
+
+    const response = await instance.post(`/task_mng/project`,JSON.stringify(newProjectHash),
+                                          {headers: {"Authorization": `${idToken}`}});
 
     if (response.status !== 200) {
       throw new Error('Server Error');
@@ -84,8 +92,11 @@ export const deleteProjectsFactory  = () => {
       "projectID": deleteProject.projectID,
       "userName": deleteProject.userName
     };
+    
+    const idToken =  getIdToken();
 
-    const response = await instance.delete(`/task_mng/project` , { data: deleteProjectHash});
+    const response = await instance.delete(`/task_mng/project` ,
+                                            { headers: {"Authorization": `${idToken}`}, data: deleteProjectHash});
 
     if (response.status !== 200) {
       throw new Error('Server Error');

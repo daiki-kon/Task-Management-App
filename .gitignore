@@ -6,6 +6,8 @@ awsConfiguration.ts
 /.pnp
 .pnp.js
 yarn.lock
+amplify/\
+src/styles/
 
 # testing
 /coverage

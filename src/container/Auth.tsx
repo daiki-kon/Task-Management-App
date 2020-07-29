@@ -57,3 +57,20 @@ export const AuthWrap: FC<RouteProps> = (props) => {
     />
   )
 }
+
+export const getIdToken = (): string => {
+  const cognitoUser = userPool.getCurrentUser();
+  let result: string = ''
+  if (cognitoUser != null) {
+    cognitoUser.getSession(function(err: any, session: any) {
+      if (err) {
+        alert(err.message || JSON.stringify(err));
+      }
+      else{
+        const idToken: string = session.getIdToken().getJwtToken();
+        result = idToken;
+      }
+    });
+  }
+  return result;
+}

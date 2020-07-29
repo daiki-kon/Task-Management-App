@@ -4,7 +4,6 @@ import { KanbanInfo, TaskCardInfo} from '../../DefineInfo'
 import { kanbanDelete } from '../../actions/kanban'
 import { taskCardAdd, taskCardDeleteAll, taskCardEdit } from '../../actions/TaskCard'
 import { storeData } from '../../reducer'
-
 import { Button, Card , Modal, Header, Grid, Icon, Form, Label, TextArea, Message, Container, Segment, Divider} from 'semantic-ui-react'
 import './TaskCard.css'
 import { type } from 'os';
