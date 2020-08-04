@@ -1,25 +1,42 @@
 import React,{ FC, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import marked from "marked";
+import highlightjs from "highlight.js";
 import { KanbanInfo, TaskCardInfo} from '../../DefineInfo'
 import { kanbanDelete } from '../../actions/kanban'
 import { taskCardAdd, taskCardDeleteAll, taskCardEdit } from '../../actions/TaskCard'
 import { storeData } from '../../reducer'
 import { Button, Card , Modal, Header, Grid, Icon, Form, Label, TextArea, Message, Container, Segment, Divider} from 'semantic-ui-react'
 import './TaskCard.css'
-import { type } from 'os';
+import { postProject } from '../../actions/Projects';
+
 
 type TaskCardProps = TaskCardInfo & {editForm: (preEditTask:TaskCardInfo) => void}
+
+const markdownToHtml = (markdown: string): string => {
+  marked.setOptions({
+    highlight: function(code, lang) {
+      return highlightjs.highlightAuto(code, [lang]).value;
+    },               
+    pedantic: false, 
+    gfm: true,       
+    breaks: true,    
+    silent: false    
+  });
+
+  return marked(markdown)
+}
 
 export const TaskCard: FC<TaskCardProps> = (
   task
 ) => {
 
-  const dispatch = useDispatch();
+  let html = markdownToHtml(task.content)
 
   return(
     <Card className="todo-card" onClick={() => task.editForm(task)}>
       <Card.Content>
-        {task.content}
+        <span dangerouslySetInnerHTML={{__html: html}}></span>
       </Card.Content>
     </Card>
   )
@@ -52,9 +69,21 @@ export const TaskCardForm: FC<TaskCardFormProps> = ({
 }) =>{
 
   const dispatch = useDispatch();
+  const taskCards = useSelector((state:storeData) => state.taskCards);
 
   const [preContent,setPreContent] = useState('');
   const [postContent,setPostContent] = useState('');
+
+  useEffect(() => { 
+    if(isEdit == true){
+      setPreContent(preEditTask?.content || '')
+
+      const html = markdownToHtml(preContent)
+    
+      setPostContent(html);
+    }
+  }, [preEditTask]);
+
   
   const taskCardCancel = () =>{
     setPostContent('')
@@ -71,9 +100,14 @@ export const TaskCardForm: FC<TaskCardFormProps> = ({
   }
 
   const handleChange = (preContent: string) =>{
-    setPreContent(preContent)
-    setPostContent(preContent);
+    setPreContent(preContent) 
+
+    let html = markdownToHtml(preContent)
+
+    setPostContent(html);
   }
+
+  console.log()
 
   return(
     <div>
@@ -94,11 +128,12 @@ export const TaskCardForm: FC<TaskCardFormProps> = ({
                   <TextArea
                     className='pre-content'
                     onChange={(e) => handleChange(e.currentTarget.value)} 
+                    value={preContent}
                   />
                 </Form.Field>
               </Grid.Column>
               <Grid.Column>
-                <p>{ postContent }</p>
+                <span dangerouslySetInnerHTML={{__html: postContent}}></span>
               </Grid.Column>
             </Grid>
           </Form>
