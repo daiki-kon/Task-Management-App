@@ -37,7 +37,7 @@ export const Verification: FC = () =>{
       console.log(result)
       setVerificationCode('')
 
-      if (result == 'SUCCESS'){
+      if (result === 'SUCCESS'){
         history.push('/SignIn')
       }
     })

@@ -5,10 +5,10 @@ import { v4 as UUID} from 'uuid';
 import { UserAction, LOGIN_USER} from './actions/User'
 import { ProjectsAction} from './actions/Projects'
 import * as ProjectActionType from './actions/ProjectConstants'
+import * as KanbanActionType from './actions/kanbanConstants';
 import { KanbanAction, KANBAN_CREATE, KANBAN_DELETE, KANBAN_EDIT_TITLE, KANBAN_EDIT_CONTENT, KANBAN_DELETE_ALL } from './actions/kanban'
 import { TascCardAction, TASK_CARD_ADD, TASK_CARD_DELETE_ALL,TASK_CARD_EDIT } from './actions/TaskCard'
 import { User, Projects, ProjectInfo, Kanbans, KanbanInfo, TascCards, TaskCardInfo } from './DefineInfo'
-import { UserAgent } from 'amazon-cognito-identity-js';
 
 const projectReducer: Reducer<Projects, ProjectsAction> = (
   state: Projects = { 
@@ -92,27 +92,76 @@ const projectReducer: Reducer<Projects, ProjectsAction> = (
 };
 
 const kanbanReducer: Reducer<Kanbans, KanbanAction> = (
-  state: Kanbans = { items: []},
+  state: Kanbans = {
+    items: [],
+    isLoading: false, 
+  },
   action: KanbanAction,
 ): Kanbans => {
   switch (action.type) {
-    case KANBAN_CREATE:
-
-      const newState: KanbanInfo = {
-        parentProjectID: action.payload.kanban.parentProjectID,
-        kanbanID: UUID().toString(),
-        kanbanTitle: action.payload.kanban.kanbanTitle,
-      }
-
+    //Create Kanban 
+    case KanbanActionType.POST_KANBAN_START:
       return {
         ...state,
-        items: [ ...state.items, newState]
+        items: [ ...state.items ],
+        isLoading: true,
+      };
+    case KanbanActionType.POST_KANBAN_SUCCEED:
+      console.log(action.payload.result)
+      return {
+        ...state,
+        items: [ ...state.items, action.payload.result],
+        isLoading: false
+        
+      };
+    case KanbanActionType.POST_KANBAN_FAIL:
+      return {
+        ...state,
+        items: [ ...state.items],
+        isLoading: false,
+        error: action.payload.error
       };
 
-    case KANBAN_DELETE:
+    // Get Kanban
+    case KanbanActionType.GET_KANBAN_START:
       return {
         ...state,
-        items: state.items.filter((kanban: KanbanInfo) => kanban.kanbanID !== action.payload.kanbanDelete.kanbanID),
+        items: [ ...state.items ],
+        isLoading: true
+      };
+    case KanbanActionType.GET_KANBAN_SUCCEED:
+      return {
+        ...state,
+        items: action.payload.result,
+        isLoading: false
+      };
+    case KanbanActionType.GET_KANBAN_FAIL:
+      return {
+        ...state,
+        items: [ ...state.items ],
+        isLoading: false,
+        error: action.payload.error
+      };
+
+    // Delete Kanban
+    case KanbanActionType.DELETE_KANBAN_START:
+      return {
+        ...state,
+        items: [ ...state.items ],
+        isLoading: true
+      };
+    case KanbanActionType.DELETE_KANBAN_SUCCEED:
+      return {
+        ...state,
+        items: state.items.filter((kanban: KanbanInfo) =>　action.payload.result.indexOf(kanban.kanbanID || '') === -1 ),
+        isLoading: false
+      };
+    case KanbanActionType.DELETE_KANBAN_FAIL:
+      return {
+        ...state,
+        items: [ ...state.items ],
+        isLoading: false,
+        error: action.payload.error
       };
 
     case KANBAN_DELETE_ALL:
@@ -120,18 +169,6 @@ const kanbanReducer: Reducer<Kanbans, KanbanAction> = (
         ...state,
         items: state.items.filter((kanban: KanbanInfo) => kanban.parentProjectID !== action.payload.parentProjectID)
       }
-
-    case KANBAN_EDIT_TITLE:
-      return {
-        ...state,
-        items: []
-      };
-
-    case KANBAN_EDIT_CONTENT:
-      return {
-        ...state,
-        items: []
-      };
   
     default: {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

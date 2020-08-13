@@ -1,7 +1,7 @@
 import React,{ FC, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { KanbanInfo, TaskCardInfo} from '../../DefineInfo'
-import { kanbanDelete } from '../../actions/kanban'
+import { deleteKanban } from '../../actions/kanban'
 import { taskCardAdd, taskCardDeleteAll, taskCardEdit } from '../../actions/TaskCard'
 import { storeData } from '../../reducer'
 import { TaskCardForm, TaskCard,TaskCardEmpty } from './TaskCard' 
@@ -13,6 +13,7 @@ const initKanbanProps: KanbanInfo = {
   parentProjectID: '',
   kanbanID: '',
   kanbanTitle: '',
+  taskCards:[]
 }
 
 const initTask: TaskCardInfo = { 
@@ -29,7 +30,8 @@ export const Kanban: FC<KanbanInfo> = (
   const [editTask,setEditTask] = useState(initTask)
 
   const dispatch = useDispatch();
-  const taskCards = useSelector((state:storeData) => state.taskCards);  
+  const taskCards = useSelector((state:storeData) => state.taskCards); 
+  const user = useSelector((state:storeData) => state.user); 
 
   const currentTaskCards: TaskCardInfo[]  = taskCards.items.filter((taskCard) => taskCard.parentKanbanID === kanban.kanbanID);
 
@@ -41,7 +43,7 @@ export const Kanban: FC<KanbanInfo> = (
 
   const kanbanClose = () => {
     dispatch(taskCardDeleteAll(kanban.kanbanID || ''));
-    dispatch(kanbanDelete(kanban));
+    dispatch(deleteKanban.start({userName: user.userName, parentProjectID: kanban.parentProjectID, deleteKanbanIDs:[kanban.kanbanID || '']}))
   }
 
   return(
@@ -56,7 +58,7 @@ export const Kanban: FC<KanbanInfo> = (
         </div>
       </div>
       {currentTaskCards.length ? 
-      (currentTaskCards.map((task:TaskCardInfo) => (<TaskCard {...task} editForm={(task:TaskCardInfo) => editForm(task)}/>)))  :  <TaskCardEmpty/>}
+      (currentTaskCards.map((task:TaskCardInfo) => (<TaskCard key={task.taskCardID} {...task} editForm={(task:TaskCardInfo) => editForm(task)}/>)))  :  <TaskCardEmpty/>}
       <Button onClick={() => setIsOpen(true)}>ADD</Button>
       <TaskCardForm 
         parentKanbanID={kanban.kanbanID||''} 

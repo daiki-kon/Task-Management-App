@@ -12,6 +12,7 @@ import './ProjectList.css';
 import { kanbanDeleteAll } from '../../actions/kanban';
 import { getProjecct, deleteProject } from '../../actions/Projects'
 import { taskCardDeleteAll } from '../../actions/TaskCard';
+import { Kanban } from '../Project/Kanban';
 
 
 export const ProjectList: FC = () => {
@@ -25,7 +26,6 @@ export const ProjectList: FC = () => {
     dispatch(getProjecct.start({userName: user.userName}))
   },[user.userName]);
   
-
 
   return(
     <div>
@@ -69,9 +69,9 @@ const ProjectDesc: FC<ProjectInfo> = (
     // 親のイベントを発火させないように追加
     e.stopPropagation() 
 
-    const deleteKanbans: KanbanInfo[] = kanbans.items.filter((kanban: KanbanInfo) => (kanban.parentProjectID === projectInfo.projectID))
-    deleteKanbans.map((kanban: KanbanInfo) => (dispatch(taskCardDeleteAll(kanban.kanbanID || ''))))
-    dispatch(kanbanDeleteAll(projectInfo.projectID || ''))
+    const deleteKanbans: KanbanInfo[] = kanbans.items.filter((kanban: KanbanInfo) => (kanban.parentProjectID === projectInfo.projectID));
+    deleteKanbans.map((kanban: KanbanInfo) => (dispatch(taskCardDeleteAll(kanban.kanbanID))))
+    dispatch(kanbanDeleteAll(projectInfo.projectID))
     dispatch(deleteProject.start({userName: user.userName, projectID: projectInfo.projectID}))
   }
 

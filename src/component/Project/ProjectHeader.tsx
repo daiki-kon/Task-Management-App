@@ -8,8 +8,9 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { kanbanCreate } from '../../actions/kanban';
-
+import { postKanban } from '../../actions/kanban';
+import { storeData } from '../../reducer'
+import { CreateKanban } from '../../DefineInfo' 
 import { Button, Form, Input,Menu } from 'semantic-ui-react';
 import './ProjectHeader.css';
 
@@ -18,9 +19,20 @@ import './ProjectHeader.css';
 const ProjectHeader : FC = () => {
 
   const dispatch = useDispatch();
+  const user = useSelector((state:storeData) => state.user);
   const { projectID } = useParams();
   const submit = (kanbanTitle: string) => {
-    dispatch(kanbanCreate({kanbanTitle: kanbanTitle,parentProjectID: projectID}));
+
+    const newKanban: CreateKanban ={
+      userName: user.userName,
+      item: {
+        parentProjectID: projectID,
+        kanbanID: '',
+        kanbanTitle: kanbanTitle,
+        taskCards:[]
+      }
+    }
+    dispatch(postKanban.start(newKanban));
     setTitle('')
   }
 

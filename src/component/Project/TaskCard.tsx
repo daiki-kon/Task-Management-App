@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import marked from "marked";
 import highlightjs from "highlight.js";
 import { KanbanInfo, TaskCardInfo} from '../../DefineInfo'
-import { kanbanDelete } from '../../actions/kanban'
 import { taskCardAdd, taskCardDeleteAll, taskCardEdit } from '../../actions/TaskCard'
 import { storeData } from '../../reducer'
 import { Button, Card , Modal, Header, Grid, Icon, Form, Label, TextArea, Message, Container, Segment, Divider} from 'semantic-ui-react'
@@ -75,7 +74,7 @@ export const TaskCardForm: FC<TaskCardFormProps> = ({
   const [postContent,setPostContent] = useState('');
 
   useEffect(() => { 
-    if(isEdit == true){
+    if(isEdit === true){
       setPreContent(preEditTask?.content || '')
 
       const html = markdownToHtml(preContent)

@@ -1,4 +1,6 @@
-import { KanbanInfo, TaskCardInfo } from  '../DefineInfo'
+import { KanbanInfo, CreateKanban, GetKanbans, DeleteKanban } from  '../DefineInfo'
+import { AxiosError } from 'axios';
+import * as KanbanActionType from './kanbanConstants';
 
 export const KANBAN_CREATE = 'KANBAN_CREATE';
 export const KANBAN_DELETE = 'KANBAN_DELETE';
@@ -6,21 +8,59 @@ export const KANBAN_DELETE_ALL = 'KANBAN_DELETE_ALL';
 export const KANBAN_EDIT_TITLE = 'KANBAN_EDIT_TITLE';
 export const KANBAN_EDIT_CONTENT = 'KANBAN_EDIT_CONTENT';
 
-export const TASK_CARD_ADD = 'TASK_CARD_ADD';
+export const postKanban = {
+  start: (params: CreateKanban) => ({
+    type: KanbanActionType.POST_KANBAN_START as typeof KanbanActionType.POST_KANBAN_START,
+    payload: {params}, 
+  }),
+  
+  succeed: (params: KanbanInfo, result: KanbanInfo) => ({
+    type: KanbanActionType.POST_KANBAN_SUCCEED as typeof KanbanActionType.POST_KANBAN_SUCCEED, 
+    payload: { params, result },
+  }),
 
-export const kanbanCreate = (
-  kanban: KanbanInfo
-) => ({
-  type: KANBAN_CREATE as typeof KANBAN_CREATE,
-  payload: { kanban }
-})
+  fail: (error: AxiosError) => ({
+    type: KanbanActionType.POST_KANBAN_FAIL as typeof KanbanActionType.POST_KANBAN_FAIL, 
+    payload: { error },
+    error: true,
+  }), 
+}
 
-export const kanbanDelete = (
-  kanbanDelete: KanbanInfo
-) => ({
-  type: KANBAN_DELETE as typeof KANBAN_DELETE,
-  payload: { kanbanDelete }
-});
+export const getKanbans = {
+  start: (params: GetKanbans) => ({
+    type: KanbanActionType.GET_KANBAN_START as typeof KanbanActionType.GET_KANBAN_START,
+    payload: { params }, 
+  }),
+  
+  succeed: (result: KanbanInfo[]) => ({
+    type: KanbanActionType.GET_KANBAN_SUCCEED as typeof KanbanActionType.GET_KANBAN_SUCCEED, 
+    payload: { result },
+  }),
+
+  fail: (error: AxiosError) => ({
+    type: KanbanActionType.GET_KANBAN_FAIL as typeof KanbanActionType.GET_KANBAN_FAIL, 
+    payload: { error },
+    error: true,
+  }), 
+};
+
+export const deleteKanban = {
+  start: (params: DeleteKanban) => ({
+    type: KanbanActionType.DELETE_KANBAN_START as typeof KanbanActionType.DELETE_KANBAN_START,
+    payload: { params }, 
+  }),
+  
+  succeed: (result: string[]) => ({
+    type: KanbanActionType.DELETE_KANBAN_SUCCEED as typeof KanbanActionType.DELETE_KANBAN_SUCCEED, 
+    payload: { result },
+  }),
+
+  fail: (error: AxiosError) => ({
+    type: KanbanActionType.DELETE_KANBAN_FAIL as typeof KanbanActionType.DELETE_KANBAN_FAIL, 
+    payload: { error },
+    error: true,
+  }), 
+};
 
 export const kanbanDeleteAll = (
   parentProjectID: string
@@ -29,18 +69,32 @@ export const kanbanDeleteAll = (
   payload: { parentProjectID }
 })
 
-export const kanbanEditTitle = () => ({
-  type: KANBAN_EDIT_TITLE as typeof KANBAN_EDIT_TITLE,
-});
+export const postTaskCard = {
+  start: (params: CreateKanban) => ({
+    type: KanbanActionType.POST_KANBAN_START as typeof KanbanActionType.POST_KANBAN_START,
+    payload: { params }, 
+  }),
+  
+  succeed: (result: KanbanInfo) => ({
+    type: KanbanActionType.POST_KANBAN_SUCCEED as typeof KanbanActionType.POST_KANBAN_SUCCEED, 
+    payload: { result },
+  }),
 
-export const kanbanEditContent = () => ({
-  type: KANBAN_EDIT_CONTENT as typeof KANBAN_EDIT_CONTENT,
-});
-
+  fail: (error: AxiosError) => ({
+    type: KanbanActionType.POST_KANBAN_FAIL as typeof KanbanActionType.POST_KANBAN_FAIL, 
+    payload: { error },
+    error: true,
+  }), 
+}
 
 export type KanbanAction =
-| ReturnType<typeof kanbanCreate>
-| ReturnType<typeof kanbanDelete>
-| ReturnType<typeof kanbanEditTitle>
-| ReturnType<typeof kanbanEditContent>
-| ReturnType<typeof kanbanDeleteAll>;
+| ReturnType<typeof kanbanDeleteAll>
+| ReturnType<typeof postKanban.start>
+| ReturnType<typeof postKanban.succeed>
+| ReturnType<typeof postKanban.fail>
+| ReturnType<typeof getKanbans.start>
+| ReturnType<typeof getKanbans.succeed>
+| ReturnType<typeof getKanbans.fail>
+| ReturnType<typeof deleteKanban.start>
+| ReturnType<typeof deleteKanban.succeed>
+| ReturnType<typeof deleteKanban.fail>;

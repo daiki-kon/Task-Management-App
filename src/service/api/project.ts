@@ -17,13 +17,12 @@ export const getProjectsFactory  = () => {
 
     const response = await instance.get(`/task_mng/project?userName=${userName}`, 
                                           {headers: {"Authorization": `${idToken}`}});
-
-    console.log(response)
     if (response.status !== 200) {
       throw new Error('Server Error');
     }
 
     const projects: ProjectInfo[] = response.data;
+
     return projects;
 
   };

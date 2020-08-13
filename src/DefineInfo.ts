@@ -8,8 +8,25 @@ export interface TaskCardInfo{
 
 export interface KanbanInfo{
   parentProjectID: string
-  kanbanID? : string;
+  kanbanID : string;
   kanbanTitle: string;
+  taskCards: TaskCardInfo[];
+} 
+
+export interface CreateKanban{
+  userName: string;
+  item: KanbanInfo;
+}
+
+export interface GetKanbans{
+  userName: string;
+  parentProjectID: string;
+}
+
+export interface DeleteKanban{
+  userName: string;
+  parentProjectID: string;
+  deleteKanbanIDs: string[];
 }
 
 export interface ProjectInfo{
@@ -36,6 +53,8 @@ export interface Projects{
 
 export interface Kanbans{
   items: KanbanInfo[];
+  isLoading: boolean
+  error?: AxiosError | null;
 }
 
 export interface TascCards{
