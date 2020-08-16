@@ -30,13 +30,15 @@ export const Kanban: FC<KanbanInfo> = (
   const [editTask,setEditTask] = useState(initTask)
 
   const dispatch = useDispatch();
-  const taskCards = useSelector((state:storeData) => state.taskCards); 
+  const kanbans = useSelector((state:storeData) => state.kanbans); 
   const user = useSelector((state:storeData) => state.user); 
 
-  const currentTaskCards: TaskCardInfo[]  = taskCards.items.filter((taskCard) => taskCard.parentKanbanID === kanban.kanbanID);
+  const kanbanIndex: number =  kanbans.items.findIndex((kanbanP:KanbanInfo) => kanbanP.kanbanID === kanban.kanbanID);
+
+  const currentTaskCards: TaskCardInfo[]  = kanbans.items[kanbanIndex].taskCards;
 
   const editForm = (preEditTask: TaskCardInfo) =>{
-    setIsOpen(true)
+    setIsOpen(true);
     setIsEdit(true);
     setEditTask(preEditTask)
   }
@@ -59,9 +61,10 @@ export const Kanban: FC<KanbanInfo> = (
       </div>
       {currentTaskCards.length ? 
       (currentTaskCards.map((task:TaskCardInfo) => (<TaskCard key={task.taskCardID} {...task} editForm={(task:TaskCardInfo) => editForm(task)}/>)))  :  <TaskCardEmpty/>}
-      <Button onClick={() => setIsOpen(true)}>ADD</Button>
+      <Button onClick={() => {setIsOpen(true); setIsEdit(false); setEditTask(initTask)}}>ADD</Button>
       <TaskCardForm 
-        parentKanbanID={kanban.kanbanID||''} 
+        parentProjectID={kanban.parentProjectID}
+        parentKanbanID={kanban.kanbanID} 
         isOpen={isOpen}
         isEdit={isEdit}
         preEditTask={editTask}

@@ -4,10 +4,12 @@ import marked from "marked";
 import highlightjs from "highlight.js";
 import { KanbanInfo, TaskCardInfo} from '../../DefineInfo'
 import { taskCardAdd, taskCardDeleteAll, taskCardEdit } from '../../actions/TaskCard'
+import { postTaskCard, putTaskCard } from '../..//actions/kanban'
 import { storeData } from '../../reducer'
 import { Button, Card , Modal, Header, Grid, Icon, Form, Label, TextArea, Message, Container, Segment, Divider} from 'semantic-ui-react'
 import './TaskCard.css'
 import { postProject } from '../../actions/Projects';
+import { prependListener } from 'process';
 
 
 type TaskCardProps = TaskCardInfo & {editForm: (preEditTask:TaskCardInfo) => void}
@@ -52,6 +54,7 @@ export const TaskCardEmpty: FC = () => {
 }
 
 interface TaskCardFormProps{
+  parentProjectID: string;
   parentKanbanID: string;
   isOpen: boolean;
   isEdit: boolean;
@@ -60,6 +63,7 @@ interface TaskCardFormProps{
 }
 
 export const TaskCardForm: FC<TaskCardFormProps> = ({
+  parentProjectID,
   parentKanbanID,
   isOpen,
   isEdit,
@@ -68,7 +72,8 @@ export const TaskCardForm: FC<TaskCardFormProps> = ({
 }) =>{
 
   const dispatch = useDispatch();
-  const taskCards = useSelector((state:storeData) => state.taskCards);
+  const user = useSelector((state:storeData) => state.user);
+
 
   const [preContent,setPreContent] = useState('');
   const [postContent,setPostContent] = useState('');
@@ -77,24 +82,29 @@ export const TaskCardForm: FC<TaskCardFormProps> = ({
     if(isEdit === true){
       setPreContent(preEditTask?.content || '')
 
-      const html = markdownToHtml(preContent)
+      const html = markdownToHtml(preEditTask?.content || '')
     
       setPostContent(html);
+    }else{
+    setPreContent('')
     }
-  }, [preEditTask]);
+  }, [isOpen, preEditTask]);
 
   
   const taskCardCancel = () =>{
+    setPreContent('');
     setPostContent('')
     changeIsOpen(false);
   }
 
   const taskCardSave = () => {
     changeIsOpen(false)
-    {isEdit?
-      dispatch(taskCardEdit({parentKanbanID: parentKanbanID, content: preContent, taskCardID: preEditTask?.taskCardID})):
-      dispatch(taskCardAdd({parentKanbanID: parentKanbanID,content: preContent}))
+    if (isEdit === true){
+      dispatch(putTaskCard.start({ userName: user.userName, parentProjectID: parentProjectID, kanbanID: parentKanbanID, taskID: preEditTask?.taskCardID || '', taskContent: preContent}));
+    }else{
+      dispatch(postTaskCard.start({userName: user.userName, parentProjectID: parentProjectID, kanbanID: parentKanbanID, taskContent: preContent }));
     }
+    setPreContent('');
     setPostContent('')
   }
 
@@ -105,8 +115,6 @@ export const TaskCardForm: FC<TaskCardFormProps> = ({
 
     setPostContent(html);
   }
-
-  console.log()
 
   return(
     <div>

@@ -27,7 +27,7 @@ const Project : FC = () => {
 
   useEffect(() => {
     dispatch(getKanbans.start({userName: user.userName, parentProjectID: projectID}))
-  },[projectID,user.userName]);
+  },[dispatch, projectID, user.userName]);
 
   const currentKanbans: KanbanInfo[]  = kanbans.items.filter((kanban) => kanban.parentProjectID === projectID)  
 

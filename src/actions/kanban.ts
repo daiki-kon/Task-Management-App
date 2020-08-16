@@ -1,4 +1,4 @@
-import { KanbanInfo, CreateKanban, GetKanbans, DeleteKanban } from  '../DefineInfo'
+import { KanbanInfo, CreateKanban, GetKanbans, DeleteKanban, TaskCardInfo, CreateTasKCard, UpdateTaskCard } from  '../DefineInfo'
 import { AxiosError } from 'axios';
 import * as KanbanActionType from './kanbanConstants';
 
@@ -70,18 +70,36 @@ export const kanbanDeleteAll = (
 })
 
 export const postTaskCard = {
-  start: (params: CreateKanban) => ({
-    type: KanbanActionType.POST_KANBAN_START as typeof KanbanActionType.POST_KANBAN_START,
+  start: (params: CreateTasKCard)  => ({
+    type: KanbanActionType.POST_TASKCARD_START as typeof KanbanActionType.POST_TASKCARD_START,
     payload: { params }, 
   }),
   
-  succeed: (result: KanbanInfo) => ({
-    type: KanbanActionType.POST_KANBAN_SUCCEED as typeof KanbanActionType.POST_KANBAN_SUCCEED, 
+  succeed: (result: TaskCardInfo) => ({
+    type: KanbanActionType.POST_TASKCARD_SUCCEED as typeof KanbanActionType.POST_TASKCARD_SUCCEED, 
     payload: { result },
   }),
 
   fail: (error: AxiosError) => ({
-    type: KanbanActionType.POST_KANBAN_FAIL as typeof KanbanActionType.POST_KANBAN_FAIL, 
+    type: KanbanActionType.POST_TASKCARD_FAIL as typeof KanbanActionType.POST_TASKCARD_FAIL, 
+    payload: { error },
+    error: true,
+  }), 
+}
+
+export const putTaskCard = {
+  start: (params: UpdateTaskCard)  => ({
+    type: KanbanActionType.PUT_TASKCARD_START as typeof KanbanActionType.PUT_TASKCARD_START,
+    payload: { params }, 
+  }),
+  
+  succeed: (result: TaskCardInfo) => ({
+    type: KanbanActionType.PUT_TASKCARD_SUCCEED as typeof KanbanActionType.PUT_TASKCARD_SUCCEED, 
+    payload: { result },
+  }),
+
+  fail: (error: AxiosError) => ({
+    type: KanbanActionType.PUT_TASKCARD_FAIL as typeof KanbanActionType.PUT_TASKCARD_FAIL, 
     payload: { error },
     error: true,
   }), 
@@ -97,4 +115,10 @@ export type KanbanAction =
 | ReturnType<typeof getKanbans.fail>
 | ReturnType<typeof deleteKanban.start>
 | ReturnType<typeof deleteKanban.succeed>
-| ReturnType<typeof deleteKanban.fail>;
+| ReturnType<typeof deleteKanban.fail>
+| ReturnType<typeof postTaskCard.start>
+| ReturnType<typeof postTaskCard.succeed>
+| ReturnType<typeof postTaskCard.fail>
+| ReturnType<typeof putTaskCard.start>
+| ReturnType<typeof putTaskCard.succeed>
+| ReturnType<typeof putTaskCard.fail>;

@@ -6,6 +6,21 @@ export interface TaskCardInfo{
   content: string;
 }
 
+export interface CreateTasKCard{
+  userName: string;
+  parentProjectID: string;
+  kanbanID: string;
+  taskContent: string;
+}
+
+export interface UpdateTaskCard{
+  userName: string;
+  parentProjectID: string;
+  kanbanID: string;
+  taskID: string;
+  taskContent: string;
+}
+
 export interface KanbanInfo{
   parentProjectID: string
   kanbanID : string;

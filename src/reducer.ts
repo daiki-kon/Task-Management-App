@@ -107,7 +107,6 @@ const kanbanReducer: Reducer<Kanbans, KanbanAction> = (
         isLoading: true,
       };
     case KanbanActionType.POST_KANBAN_SUCCEED:
-      console.log(action.payload.result)
       return {
         ...state,
         items: [ ...state.items, action.payload.result],
@@ -153,7 +152,7 @@ const kanbanReducer: Reducer<Kanbans, KanbanAction> = (
     case KanbanActionType.DELETE_KANBAN_SUCCEED:
       return {
         ...state,
-        items: state.items.filter((kanban: KanbanInfo) =>　action.payload.result.indexOf(kanban.kanbanID || '') === -1 ),
+        items: state.items.filter((kanban: KanbanInfo) =>　action.payload.result.indexOf(kanban.kanbanID) === -1 ),
         isLoading: false
       };
     case KanbanActionType.DELETE_KANBAN_FAIL:
@@ -169,6 +168,69 @@ const kanbanReducer: Reducer<Kanbans, KanbanAction> = (
         ...state,
         items: state.items.filter((kanban: KanbanInfo) => kanban.parentProjectID !== action.payload.parentProjectID)
       }
+
+    // Post TaskCard
+    case KanbanActionType.POST_TASKCARD_START:
+      return {
+        ...state,
+        items: [ ...state.items ],
+        isLoading: true
+      };
+    case KanbanActionType.POST_TASKCARD_SUCCEED:
+      const changeIndex: number =  state.items.findIndex((kanban:KanbanInfo) => kanban.kanbanID === action.payload.result.parentKanbanID)
+      return {
+        ...state,
+        items: [
+          ...state.items.slice(0,changeIndex),
+          { ...state.items[changeIndex], 
+            taskCards: [
+              ...state.items[changeIndex].taskCards, action.payload.result
+            ] 
+          },
+          ...state.items.slice(changeIndex+1)
+        ],
+        isLoading: false
+      };
+    case KanbanActionType.POST_TASKCARD_FAIL:
+      return {
+        ...state,
+        items: [ ...state.items ],
+        isLoading: false,
+        error: action.payload.error
+      };
+
+    // Put TaskCard
+    case KanbanActionType.PUT_TASKCARD_START:
+      return {
+        ...state,
+        items: [ ...state.items ],
+        isLoading: true
+      };
+    case KanbanActionType.PUT_TASKCARD_SUCCEED:
+      const updateKanbanIndex: number =  state.items.findIndex((kanban:KanbanInfo) => kanban.kanbanID === action.payload.result.parentKanbanID)
+      const updateTaskCardIndex: number = state.items[updateKanbanIndex].taskCards.findIndex((task:TaskCardInfo) => task.taskCardID === action.payload.result.taskCardID)
+      return {
+        ...state,
+        items: [
+          ...state.items.slice(0,updateKanbanIndex),
+          { ...state.items[updateKanbanIndex], 
+            taskCards: [
+              ...state.items[updateKanbanIndex].taskCards.slice(0,updateTaskCardIndex), 
+              action.payload.result,
+              ...state.items[updateKanbanIndex].taskCards.slice(updateTaskCardIndex+1)
+            ] 
+          },
+          ...state.items.slice(updateKanbanIndex+1)
+        ],
+        isLoading: false
+      };
+    case KanbanActionType.PUT_TASKCARD_FAIL:
+      return {
+        ...state,
+        items: [ ...state.items ],
+        isLoading: false,
+        error: action.payload.error
+      };
   
     default: {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

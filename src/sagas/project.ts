@@ -5,12 +5,12 @@ import { getProjecct, postProject,　deleteProject } from '../actions/Projects';
 import { getProjectsFactory, postProjectFactory, deleteProjectsFactory } from '../service/api/project';
 import { CreateProject, DeleteProject } from '../DefineInfo';
 
-import { watchPostKanban, watchGetKanbans, watchDeleteKanban } from './kanban'
+import { watchPostKanban, watchGetKanbans, watchDeleteKanban, watchPostTaskCard, watchPutTaskCard } from './kanban'
 
 function* runGetProjects(action: ReturnType<typeof getProjecct.start>) {
   const { userName } = action.payload;
 
-  if( userName == "" ){
+  if( userName === "" ){
     return
   }
 
@@ -75,5 +75,6 @@ export function* watchDeleteProject() {
 }
 
 export default function* rootSaga() {
-  yield all([fork(watchGetProjects),fork(watchPostProject),fork(watchDeleteProject),fork(watchPostKanban),fork(watchGetKanbans),fork(watchDeleteKanban)]);
+  yield all([fork(watchGetProjects),fork(watchPostProject),fork(watchDeleteProject),fork(watchPostKanban),fork(watchGetKanbans),fork(watchDeleteKanban)
+            , fork(watchPostTaskCard),fork(watchPutTaskCard)]);
 }
